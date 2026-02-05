@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Just for you, Eya 💞</title>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: black;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+    color: white;
+}
+
+/* LOCK SCREEN */
+#lockScreen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle, #1a1a2e, #000);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+#lockScreen input {
+    padding: 12px;
+    width: 260px;
+    border-radius: 8px;
+    border: none;
+    text-align: center;
+}
+
+#lockScreen button {
+    margin-top: 15px;
+    padding: 10px 25px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+}
+
+/* MAIN CONTENT */
+#main { display: none; }
+
+canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+}
+
+#container {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 2;
+}
+
+.say {
+    display: block;
+    font-size: 22px;
+    margin: 12px 0;
+    opacity: 0;
+    animation: fadeIn 1.5s forwards;
+}
+
+.say:nth-child(1) { animation-delay: 1s; }
+.say:nth-child(2) { animation-delay: 3s; }
+.say:nth-child(3) { animation-delay: 5s; }
+.say:nth-child(4) { animation-delay: 7s; }
+.say:nth-child(5) { animation-delay: 9s; }
+.say:nth-child(6) { animation-delay: 11s; }
+.say:nth-child(7) { animation-delay: 13s; }
+.say:nth-child(8) { animation-delay: 15s; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* POEM */
+#poem {
+    margin-top: 35px;
+    direction: rtl;
+    font-size: 20px;
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+    animation-delay: 17s;
+}
+
+/* BUTTON */
+#revealBtn {
+    margin-top: 25px;
+    padding: 12px 22px;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+    animation-delay: 20s;
+}
+
+/* LOADING */
+#loading {
+    display: none;
+    margin-top: 20px;
+}
+
+/* QR */
+#qr {
+    display: none;
+    margin-top: 20px;
+}
+
+/* HEARTS */
+.heart {
+    position: absolute;
+    animation: float 6s linear infinite;
+}
+
+@keyframes float {
+    from { transform: translateY(100vh); opacity: 1; }
+    to { transform: translateY(-10vh); opacity: 0; }
+}
+
+audio { display: none; }
+</style>
+</head>
+
+<body>
+
+<!-- LOCK SCREEN -->
+<div id="lockScreen">
+    <h2>Only one heart opens this 💌</h2>
+    <input type="password" id="password" placeholder="Enter the password">
+    <button onclick="unlock()">Enter</button>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main">
+<canvas id="stars"></canvas>
+
+<audio id="bgAudio" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7b8d92b0c1.mp3" type="audio/mpeg">
+</audio>
+
+<div id="container">
+    <span class="say">Hey Eya 💞</span>
+    <span class="say">This isn’t a special date…</span>
+    <span class="say">yet you make ordinary days</span>
+    <span class="say">feel quietly magical ✨</span>
+    <span class="say">Your presence feels like home,</span>
+    <span class="say">soft… warm… unforgettable 😌</span>
+    <span class="say">I just wanted you to feel that.</span>
+    <span class="say">And now… read this 🤍</span>
+
+    <div id="poem">
+        إيـا،<br>
+        لستِ صدفةً مرّت في يومي،<br>
+        بل هدوءٌ استقرّ في قلبي دون استئذان.<br><br>
+        معكِ، الأشياء العادية تبتسم،<br>
+        والوقت يتأنّى،<br>
+        وكأن العالم يقول لي:<br>
+        تمهّل… هذه نعمة.
+    </div>
+
+    <button id="revealBtn" onclick="showLoading()">This reminds me of you 💌</button>
+
+    <div id="loading">Loading a secret… ⏳</div>
+
+    <div id="qr">
+        <p>Scan this 🤍</p>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://www.instagram.com/reel/DRFBr8wkuzW/?igsh=cTduYnFvNTBoNnR0">
+    </div>
+</div>
+</div>
+
+<script>
+function unlock() {
+    const entered = document.getElementById("password").value;
+    if (entered === "my first love and only wife") {
+        document.getElementById("lockScreen").style.display = "none";
+        document.getElementById("main").style.display = "block";
+        hearts();
+        stars();
+        const audio = document.getElementById('bgAudio');
+        audio.play().catch(() => {
+            window.addEventListener('touchstart', () => audio.play(), { once: true });
+        });
+    } else alert("Wrong password 💔");
+}
+
+function showLoading() {
+    document.getElementById("revealBtn").style.display = "none";
+    document.getElementById("loading").style.display = "block";
+    setTimeout(() => {
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("qr").style.display = "block";
+    }, 2500);
+}
+
+function hearts() {
+    setInterval(() => {
+        let h = document.createElement("div");
+        h.className = "heart";
+        h.innerHTML = "💗";
+        h.style.left = Math.random()*100 + "vw";
+        h.style.fontSize = (15 + Math.random()*20) + "px";
+        document.body.appendChild(h);
+        setTimeout(()=>h.remove(),6000);
+    }, 400);
+}
+
+function stars() {
+    const c = document.getElementById("stars");
+    const x = c.getContext("2d");
+    function resizeCanvas() {
+        c.width = window.innerWidth;
+        c.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    let s = Array.from({length:120},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*2}));
+    (function a(){
+        x.clearRect(0,0,c.width,c.height);
+        x.fillStyle="white";
+        s.forEach(e=>{
+            e.y+=0.2;
+            if(e.y>c.height)e.y=0;
+            x.beginPath();x.arc(e.x,e.y,e.r,0,Math.PI*2);x.fill();
+        });
+        requestAnimationFrame(a);
+    })();
+}
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Just for you, Eya 💞</title>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: black;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+    color: white;
+}
+
+/* LOCK SCREEN */
+#lockScreen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle, #1a1a2e, #000);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+#lockScreen input {
+    padding: 12px;
+    width: 260px;
+    border-radius: 8px;
+    border: none;
+    text-align: center;
+}
+
+#lockScreen button {
+    margin-top: 15px;
+    padding: 10px 25px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+}
+
+/* MAIN CONTENT */
+#main { display: none; }
+
+canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+}
+
+#container {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 2;
+}
+
+.say {
+    display: block;
+    font-size: 22px;
+    margin: 12px 0;
+    opacity: 0;
+    animation: fadeIn 1.5s forwards;
+}
+
+.say:nth-child(1) { animation-delay: 1s; }
+.say:nth-child(2) { animation-delay: 3s; }
+.say:nth-child(3) { animation-delay: 5s; }
+.say:nth-child(4) { animation-delay: 7s; }
+.say:nth-child(5) { animation-delay: 9s; }
+.say:nth-child(6) { animation-delay: 11s; }
+.say:nth-child(7) { animation-delay: 13s; }
+.say:nth-child(8) { animation-delay: 15s; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* POEM */
+#poem {
+    margin-top: 35px;
+    direction: rtl;
+    font-size: 20px;
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+    animation-delay: 17s;
+}
+
+/* BUTTON */
+#revealBtn {
+    margin-top: 25px;
+    padding: 12px 22px;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+    animation-delay: 20s;
+}
+
+/* LOADING */
+#loading {
+    display: none;
+    margin-top: 20px;
+}
+
+/* QR */
+#qr {
+    display: none;
+    margin-top: 20px;
+}
+
+/* HEARTS */
+.heart {
+    position: absolute;
+    animation: float 6s linear infinite;
+}
+
+@keyframes float {
+    from { transform: translateY(100vh); opacity: 1; }
+    to { transform: translateY(-10vh); opacity: 0; }
+}
+
+audio { display: none; }
+</style>
+</head>
+
+<body>
+
+<!-- LOCK SCREEN -->
+<div id="lockScreen">
+    <h2>Only one heart opens this 💌</h2>
+    <input type="password" id="password" placeholder="Enter the password">
+    <button onclick="unlock()">Enter</button>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main">
+<canvas id="stars"></canvas>
+
+<audio id="bgAudio" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7b8d92b0c1.mp3" type="audio/mpeg">
+</audio>
+
+<div id="container">
+    <span class="say">Hey Eya 💞</span>
+    <span class="say">This isn’t a special date…</span>
+    <span class="say">yet you make ordinary days</span>
+    <span class="say">feel quietly magical ✨</span>
+    <span class="say">Your presence feels like home,</span>
+    <span class="say">soft… warm… unforgettable 😌</span>
+    <span class="say">I just wanted you to feel that.</span>
+    <span class="say">And now… read this 🤍</span>
+
+    <div id="poem">
+        إيـا،<br>
+        لستِ صدفةً مرّت في يومي،<br>
+        بل هدوءٌ استقرّ في قلبي دون استئذان.<br><br>
+        معكِ، الأشياء العادية تبتسم،<br>
+        والوقت يتأنّى،<br>
+        وكأن العالم يقول لي:<br>
+        تمهّل… هذه نعمة.
+    </div>
+
+    <button id="revealBtn" onclick="showLoading()">This reminds me of you 💌</button>
+
+    <div id="loading">Loading a secret… ⏳</div>
+
+    <div id="qr">
+        <p>Scan this 🤍</p>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://www.instagram.com/reel/DRFBr8wkuzW/?igsh=cTduYnFvNTBoNnR0">
+    </div>
+</div>
+</div>
+
+<script>
+function unlock() {
+    const entered = document.getElementById("password").value;
+    if (entered === "my first love and only wife") {
+        document.getElementById("lockScreen").style.display = "none";
+        document.getElementById("main").style.display = "block";
+        hearts();
+        stars();
+        const audio = document.getElementById('bgAudio');
+        audio.play().catch(() => {
+            window.addEventListener('touchstart', () => audio.play(), { once: true });
+        });
+    } else alert("Wrong password 💔");
+}
+
+function showLoading() {
+    document.getElementById("revealBtn").style.display = "none";
+    document.getElementById("loading").style.display = "block";
+    setTimeout(() => {
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("qr").style.display = "block";
+    }, 2500);
+}
+
+function hearts() {
+    setInterval(() => {
+        let h = document.createElement("div");
+        h.className = "heart";
+        h.innerHTML = "💗";
+        h.style.left = Math.random()*100 + "vw";
+        h.style.fontSize = (15 + Math.random()*20) + "px";
+        document.body.appendChild(h);
+        setTimeout(()=>h.remove(),6000);
+    }, 400);
+}
+
+function stars() {
+    const c = document.getElementById("stars");
+    const x = c.getContext("2d");
+    function resizeCanvas() {
+        c.width = window.innerWidth;
+        c.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    let s = Array.from({length:120},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*2}));
+    (function a(){
+        x.clearRect(0,0,c.width,c.height);
+        x.fillStyle="white";
+        s.forEach(e=>{
+            e.y+=0.2;
+            if(e.y>c.height)e.y=0;
+            x.beginPath();x.arc(e.x,e.y,e.r,0,Math.PI*2);x.fill();
+        });
+        requestAnimationFrame(a);
+    })();
+}
+</script>
+
+</body>
+</html>
